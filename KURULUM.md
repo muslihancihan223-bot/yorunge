@@ -63,3 +63,9 @@ Aylık gelir ≈ aylık oyun sayısı × oyun başına gösterilen reklam × (eC
 - `ads.txt`: AdSense satıcı doğrulama dosyası
 - `qr/`: Afişler ve sade QR'lar
 - `tools/afis.py`, `tools/qr.py`: QR ve afiş üretici
+
+## Oyun portalı: GameMonetize
+- `python3 tools/portal.py <GAME_ID>` → `portal/index.html` + `yorunge-gamemonetize.zip`
+- Portal sürümünde kendi reklamlarımız (Adsterra/AdSense), sayaç, paylaşım butonu ve dış linkler yok;
+  reklamı GameMonetize SDK'sı gösterir (her 2 oyunda bir, oyun sonunda). Kapak görselleri: `portal/thumbs/`.
+- Oyun, cihaz dili Türkçe değilse otomatik İngilizce açılır (portallar ve Odd Origins izleyicileri için).

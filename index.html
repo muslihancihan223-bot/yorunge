@@ -38,23 +38,23 @@
 
 <div class="screen" id="menu">
   <h1>YÖRÜNGE</h1>
-  <p class="sub">Ekrana dokun, yön değiştir.<br>Kırmızı ışınlardan kaç, altın orbları topla.</p>
+  <p class="sub" data-t="howto">Ekrana dokun, yön değiştir.<br>Kırmızı ışınlardan kaç, altın orbları topla.</p>
   <p class="best" id="menuBest"></p>
-  <button id="playBtn">OYNA</button>
+  <button id="playBtn" data-t="play">OYNA</button>
   <div id="bannerMenu"></div>
 </div>
 
 <div class="screen hidden" id="over">
-  <p class="sub">SKOR</p>
+  <p class="sub" data-t="score">SKOR</p>
   <div class="big" id="finalScore">0</div>
   <p class="best" id="finalBest"></p>
-  <button id="reviveBtn" class="alt hidden">▶ Reklam izle, devam et</button>
-  <button id="againBtn">TEKRAR OYNA</button>
-  <button id="shareBtn" class="alt">Arkadaşına meydan oku</button>
+  <button id="reviveBtn" class="alt hidden" data-t="revive">▶ Reklam izle, devam et</button>
+  <button id="againBtn" data-t="again">TEKRAR OYNA</button>
+  <button id="shareBtn" class="alt" data-t="share">Arkadaşına meydan oku</button>
   <div id="banner"></div>
 </div>
 
-<div class="foot">İndirme yok, tarayıcıda oynanır · <a href="gizlilik.html">Gizlilik</a></div>
+<div class="foot"><span data-t="foot">İndirme yok, tarayıcıda oynanır</span> · <a href="gizlilik.html" data-t="privacy">Gizlilik</a></div>
 
 <script>
 /* =====================================================================
@@ -77,6 +77,21 @@ const CONFIG = {
   // Kaç oyunda bir geçiş reklamı denensin (AdSense ayrıca kendi sıklık sınırını uygular).
   interstitialEvery: 2,
 };
+
+/* ---------- Dil: Türkçe cihazlarda Türkçe, diğerlerinde İngilizce ---------- */
+const LANG = (navigator.language || "en").toLowerCase().startsWith("tr") ? "tr" : "en";
+const TEXTS = {
+  tr: { best: "En iyi: ", record: "YENİ REKOR!", copied: "Link kopyalandı ✓",
+        shareText: (n) => "Yörünge'de " + n + " yaptım, geçebilir misin?" },
+  en: { howto: "Tap to flip direction.<br>Dodge the red beams, grab the gold orbs.", play: "PLAY", score: "SCORE",
+        revive: "▶ Watch an ad to continue", again: "PLAY AGAIN", share: "Challenge a friend",
+        foot: "No download, plays in your browser", privacy: "Privacy",
+        best: "Best: ", record: "NEW RECORD!", copied: "Link copied ✓",
+        shareText: (n) => "I scored " + n + " in Yorunge. Can you beat it?" },
+};
+const T = TEXTS[LANG];
+document.documentElement.lang = LANG;
+if (LANG !== "tr") document.querySelectorAll("[data-t]").forEach((el) => { if (T[el.dataset.t]) el.innerHTML = T[el.dataset.t]; });
 
 /* ---------- QR kaynağı: ?src=durak gibi. Hangi QR'ın kaç oyuncu getirdiğini ayırır ---------- */
 const params = new URLSearchParams(location.search);
@@ -169,7 +184,7 @@ const S = { state: "menu", score: 0, combo: 0, angle: -Math.PI / 2, dir: 1, spee
   beams: [], orbs: [], parts: [], t: 0, nextBeam: 1.2, nextOrb: 0.5, shake: 0, revived: false, games: 0 };
 let best = 0;
 try { best = +localStorage.getItem("yorunge_best") || 0; } catch (e) {}
-$("menuBest").textContent = best ? "En iyi: " + best : "";
+$("menuBest").textContent = best ? T.best + best : "";
 
 const angDiff = (a, b) => { let d = (a - b) % (Math.PI * 2); if (d < -Math.PI) d += Math.PI * 2; if (d > Math.PI) d -= Math.PI * 2; return Math.abs(d); };
 
@@ -195,11 +210,12 @@ function gameOver() {
   S.games++;
   if (S.score > best) { best = S.score; try { localStorage.setItem("yorunge_best", best); } catch (e) {} }
   $("finalScore").textContent = S.score;
-  $("finalBest").textContent = (S.score >= best && S.score > 0) ? "YENİ REKOR!" : "En iyi: " + best;
+  $("finalBest").textContent = (S.score >= best && S.score > 0) ? T.record : T.best + best;
   $("reviveBtn").classList.add("hidden");
   track("oyun-bitti");
   setTimeout(() => {
     $("over").classList.remove("hidden");
+    if (window.onGameOverAd) window.onGameOverAd(S.games);   // portal sürümleri (GameMonetize vb.) için
     showBanner("banner");
     offerRevive();
     if (ADS_ON && S.games % CONFIG.interstitialEvery === 0) {
@@ -227,10 +243,10 @@ $("againBtn").onclick = (e) => { e.stopPropagation(); beep(660, 0.1); start(fals
 $("shareBtn").onclick = async (e) => {
   e.stopPropagation();
   const url = location.origin + location.pathname + "?src=paylasim";
-  const text = "Yörünge'de " + S.score + " yaptım, geçebilir misin? 🔵 " + url;
+  const text = T.shareText(S.score) + " 🔵 " + url;
   track("paylasim");
   try { if (navigator.share) { await navigator.share({ title: "Yörünge", text, url }); return; } } catch (err) { return; }
-  try { await navigator.clipboard.writeText(text); $("shareBtn").textContent = "Link kopyalandı ✓"; } catch (err) {}
+  try { await navigator.clipboard.writeText(text); $("shareBtn").textContent = T.copied; } catch (err) {}
 };
 
 function tap(e) {

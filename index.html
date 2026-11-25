@@ -24,6 +24,7 @@
   .best { color:var(--gold); font-size:16px; }
   button { font:inherit; font-size:19px; font-weight:700; border:0; border-radius:14px; padding:15px 28px; min-width:240px; cursor:pointer; color:#07071a; background:var(--neon); box-shadow:0 0 22px rgba(61,242,255,.6); }
   button.alt { background:transparent; color:#fff; border:2px solid var(--pink); box-shadow:0 0 16px rgba(255,61,242,.45); }
+  a.more { display:inline-block; margin-top:14px; color:#41f0ff; font-weight:700; text-decoration:none; border-bottom:1px dashed #41f0ff; padding-bottom:2px; }
   button:active { transform:scale(.97); }
   #banner { min-height:50px; width:100%; max-width:340px; display:flex; justify-content:center; }
   .foot { position:fixed; bottom:max(8px,env(safe-area-inset-bottom)); left:0; right:0; text-align:center; font-size:11px; color:#6c6c99; }
@@ -41,6 +42,7 @@
   <p class="sub" data-t="howto">Ekrana dokun, yön değiştir.<br>Kırmızı ışınlardan kaç, altın orbları topla.</p>
   <p class="best" id="menuBest"></p>
   <button id="playBtn" data-t="play">OYNA</button>
+  <a class="more" id="moreMenu" href="https://muslihancihan223-bot.github.io/" data-t="more">🎮 3.000+ oyun daha → HemenOyna</a>
   <div id="bannerMenu"></div>
 </div>
 
@@ -51,6 +53,7 @@
   <button id="reviveBtn" class="alt hidden" data-t="revive">▶ Reklam izle, devam et</button>
   <button id="againBtn" data-t="again">TEKRAR OYNA</button>
   <button id="shareBtn" class="alt" data-t="share">Arkadaşına meydan oku</button>
+  <a class="more" id="moreOver" href="https://muslihancihan223-bot.github.io/" data-t="more">🎮 3.000+ oyun daha → HemenOyna</a>
   <div id="banner"></div>
 </div>
 
@@ -84,7 +87,7 @@ const TEXTS = {
   tr: { best: "En iyi: ", record: "YENİ REKOR!", copied: "Link kopyalandı ✓",
         shareText: (n) => "Yörünge'de " + n + " yaptım, geçebilir misin?" },
   en: { howto: "Tap to flip direction.<br>Dodge the red beams, grab the gold orbs.", play: "PLAY", score: "SCORE",
-        revive: "▶ Watch an ad to continue", again: "PLAY AGAIN", share: "Challenge a friend",
+        revive: "▶ Watch an ad to continue", again: "PLAY AGAIN", share: "Challenge a friend", more: "🎮 3,000+ more games →",
         foot: "No download, plays in your browser", privacy: "Privacy",
         best: "Best: ", record: "NEW RECORD!", copied: "Link copied ✓",
         shareText: (n) => "I scored " + n + " in Yorunge. Can you beat it?" },
@@ -96,6 +99,9 @@ if (LANG !== "tr") document.querySelectorAll("[data-t]").forEach((el) => { if (T
 /* ---------- QR kaynağı: ?src=durak gibi. Hangi QR'ın kaç oyuncu getirdiğini ayırır ---------- */
 const params = new URLSearchParams(location.search);
 const SRC = (params.get("src") || "direkt").toLowerCase().replace(/[^a-z0-9\-_]/g, "").slice(0, 40) || "direkt";
+["moreMenu","moreOver"].forEach((id) => { const a = document.getElementById(id); if (!a) return;
+  a.href = "https://muslihancihan223-bot.github.io/?src=yorunge-" + SRC;
+  a.addEventListener("click", () => { try { track("hemenoyna-tik"); } catch (e) {} }); });
 
 /* ---------- Analiz ---------- */
 function track(name) {

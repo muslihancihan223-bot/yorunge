@@ -1,0 +1,6 @@
+{
+    "advertisement": {
+        "banner": { "disable": true },
+        "rewarded": { "disable": true }
+    }
+}

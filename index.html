@@ -42,7 +42,7 @@
   <p class="sub" data-t="howto">Ekrana dokun, yön değiştir.<br>Kırmızı ışınlardan kaç, altın orbları topla.</p>
   <p class="best" id="menuBest"></p>
   <button id="playBtn" data-t="play">OYNA</button>
-  <a class="more" id="moreMenu" href="https://muslihancihan223-bot.github.io/" data-t="more">🎮 3.000+ oyun daha → HemenOyna</a>
+  <a class="more" id="moreMenu" href="https://hemen-oyna.com/" data-t="more">🎮 3.000+ oyun daha → HemenOyna</a>
   <div id="bannerMenu"></div>
 </div>
 
@@ -53,7 +53,7 @@
   <button id="reviveBtn" class="alt hidden" data-t="revive">▶ Reklam izle, devam et</button>
   <button id="againBtn" data-t="again">TEKRAR OYNA</button>
   <button id="shareBtn" class="alt" data-t="share">Arkadaşına meydan oku</button>
-  <a class="more" id="moreOver" href="https://muslihancihan223-bot.github.io/" data-t="more">🎮 3.000+ oyun daha → HemenOyna</a>
+  <a class="more" id="moreOver" href="https://hemen-oyna.com/" data-t="more">🎮 3.000+ oyun daha → HemenOyna</a>
   <div id="banner"></div>
 </div>
 
@@ -100,7 +100,7 @@ if (LANG !== "tr") document.querySelectorAll("[data-t]").forEach((el) => { if (T
 const params = new URLSearchParams(location.search);
 const SRC = (params.get("src") || "direkt").toLowerCase().replace(/[^a-z0-9\-_]/g, "").slice(0, 40) || "direkt";
 ["moreMenu","moreOver"].forEach((id) => { const a = document.getElementById(id); if (!a) return;
-  a.href = "https://muslihancihan223-bot.github.io/?src=yorunge-" + SRC;
+  a.href = "https://hemen-oyna.com/?src=yorunge-" + SRC;
   a.addEventListener("click", () => { try { track("hemenoyna-tik"); } catch (e) {} }); });
 
 /* ---------- Analiz ---------- */
@@ -395,7 +395,7 @@ let last = performance.now();
 function loop(now) {
   const dt = Math.min((now - last) / 1000, 0.05);
   last = now;
-  update(dt);
+  if (!window.__adPause) update(dt);   // portal reklamı sırasında oyun durur
   draw();
   requestAnimationFrame(loop);
 }
